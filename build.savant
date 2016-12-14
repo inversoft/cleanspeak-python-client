@@ -4,14 +4,6 @@
 cleanspeakVersion = "3.6.0-{integration}"
 savantVersion = "1.0.0"
 
-databaseVersion = "0.3.1"
-domainVersion = "0.2.0"
-jackson5Version = "2.3.0"
-langToolsVersion = "0.5.0"
-licenseVersion = "1.0.0"
-primeEmailVersion = "0.13.1"
-toolsVersion = "0.27.0"
-
 project(group: "com.inversoft.cleanspeak", name: "cleanspeak-python-client", version: "3.6.0", licenses: ["Commercial"]) {
   workflow {
     standard()
@@ -24,95 +16,31 @@ project(group: "com.inversoft.cleanspeak", name: "cleanspeak-python-client", ver
     subversion(repository: "http://svn.inversoft.com/internal/savant")
   }
 
-  dependencies {
-    group(name: "compile") {
-      dependency(id: "com.fasterxml.jackson.core:jackson-annotations:2.3.0")
-      dependency(id: "com.fasterxml.jackson.core:jackson-core:2.3.0")
-      dependency(id: "com.fasterxml.jackson.core:jackson-databind:2.3.0")
-      dependency(id: "com.google.inject:guice:4.0.0")
-      dependency(id: "com.google.inject.extensions:guice-multibindings:4.0.0")
-      dependency(id: "com.googlecode.json-simple:json-simple:1.1.1")
-      dependency(id: "com.inversoft:inversoft-database:${databaseVersion}")
-      dependency(id: "com.inversoft:inversoft-domain:${domainVersion}")
-      dependency(id: "com.inversoft:inversoft-license:${licenseVersion}")
-      dependency(id: "com.inversoft:inversoft-tools:${toolsVersion}")
-      dependency(id: "com.inversoft:jackson5:${jackson5Version}")
-      dependency(id: "com.inversoft:lang-tools:${langToolsVersion}")
-      dependency(id: "javax.inject:javax.inject:1")
-      dependency(id: "org.apache.commons:commons-lang3:3.1")
-      dependency(id: "org.mybatis:mybatis:3.2.7")
-      dependency(id: "org.mybatis:mybatis-guice:3.6")
-      dependency(id: "org.supercsv:supercsv:1.52")
-      dependency(id: "org.primeframework:prime-email:${primeEmailVersion}")
-    }
-    group(name: "test-compile", export: false) {
-      dependency(id: "com.mysql:mysql-connector-java:5.1.34")
-      dependency(id: "org.testng:testng:6.8.7")
-      dependency(id: "org.postgresql:postgresql:9.3.1102+jdbc41")
-    }
-    group(name: "test-runtime", export: false) {
-      dependency(id: "ch.qos.logback:logback-core:1.0.11")
-      dependency(id: "ch.qos.logback:logback-classic:1.0.11")
-      dependency(id: "com.inversoft.cleanspeak:cleanspeak-database:${cleanspeakVersion}")
-      dependency(id: "net.sourceforge.cglib:cglib-nodep:2.2.2")
-    }
-    group(name: "database", export: false) {
-      dependency(id: "com.inversoft.cleanspeak:cleanspeak-database:mysql:${cleanspeakVersion}:sql")
-      dependency(id: "com.inversoft.cleanspeak:cleanspeak-database:postgresql:${cleanspeakVersion}:sql")
-    }
-  }
-
   publications {
     standard()
   }
 }
 
 // Plugins
-dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:${savantVersion}")
-java = loadPlugin(id: "org.savantbuild.plugin:java:${savantVersion}")
-javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:${savantVersion}")
-idea = loadPlugin(id: "org.savantbuild.plugin:idea:${savantVersion}")
 release = loadPlugin(id: "org.savantbuild.plugin:release-git:${savantVersion}")
-database = loadPlugin(id: "org.savantbuild.plugin:database:0.4.4")
-
-java.settings.javaVersion = "1.8"
-javaTestNG.settings.javaVersion = "1.8"
+file = loadPlugin(id: "org.savantbuild.plugin:file:${savantVersion}")
 
 target(name: "clean", description: "Cleans the build directory") {
-  java.clean()
+  file.prune(dir: 'build/zips')
 }
 
-target(name: "config", description: "Configures the project for compilation, testing, etc.") {
-  dependency.copy(to: "build/database", removeVersion: true) {
-    dependencies(group: "database", transitive: false, fetchSource: false)
-  }
-}
-
-target(name: "compile", description: "Compiles the Java source files", dependsOn: ["config"]) {
-  java.compile()
+target(name: "compile", description: "Compiles the Java source files") {
+  // Nothing
 }
 
 target(name: "jar", description: "Builds the project JARs", dependsOn: ["compile"]) {
-  java.jar()
-}
-
-target(name: "test", description: "Runs the project's tests", dependsOn: ["jar", "createTestDatabase"]) {
-  ["mysql", "postgresql"].each { type ->
-    javaTestNG.settings.jvmArguments = "-Ddatabase.type=${type}"
-    javaTestNG.test()
+  file.zip(file: 'build/zips/cleanspeak-python-client.zip') {
+    fileSet(dir: 'src/main/python', excludePatterns: [/.*pyc/])
   }
 }
 
-target(name: "createTestDatabase", description: "Creates the test database for IJ testing", dependsOn: ["config"]) {
-  // Create the database
-  ["mysql", "postgresql"].each { type ->
-    database.settings.createArguments = (type == "mysql") ? "--default-character-set=utf8mb4" : ""
-    database.settings.createSuffix = (type == "mysql") ? "character set = utf8mb4 collate = utf8mb4_bin" : ""
-    database.settings.executeArguments = (type == "mysql") ? "--default-character-set=utf8mb4" : ""
-    database.settings.type = type
-    database.createTestDatabase()
-    database.execute(file: "build/database/${type}.sql")
-  }
+target(name: "test", description: "Runs the project's tests", dependsOn: ['compile']) {
+  // To-do
 }
 
 target(name: "int", description: "Releases a local integration build of the project", dependsOn: ["test"]) {
@@ -125,12 +53,4 @@ target(name: "release", description: "Releases a full version of the project", d
 
 target(name: "idea", description: "Updates the IntelliJ IDEA module file") {
   idea.iml()
-}
-
-target(name: "listUnusedDependencies", description: "Lists the unused dependencies of the project", dependsOn: ["compile"]) {
-  dependency.listUnusedDependencies()
-}
-
-target(name: "dependencyTree", description: "Print the entire dependency tree") {
-  dependency.printFull()
 }
