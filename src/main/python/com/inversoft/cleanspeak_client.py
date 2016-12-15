@@ -385,27 +385,27 @@ class RESTClient:
 
         return self
 
-
-def to_json(obj):
-    return json.dumps(obj, default=default_json_handler)
-
-
-def to_pretty_json(obj):
-    return json.dumps(obj, default=default_json_handler,
-                      sort_keys=True, indent=4)
-
-
-def default_json_handler(obj):
-    if isinstance(obj, set):
-        return list(obj)
-
-    if isinstance(obj, bool):
-        return "foo" if True else "bar"
-
-    if obj is 'null':
-        return 'foo'
-
-    return obj.__dict__
+#
+# def to_json(obj):
+#     return json.dumps(obj, default=default_json_handler)
+#
+#
+# def to_pretty_json(obj):
+#     return json.dumps(obj, default=default_json_handler,
+#                       sort_keys=True, indent=4)
+#
+#
+# def default_json_handler(obj):
+#     if isinstance(obj, set):
+#         return list(obj)
+#
+#     if isinstance(obj, bool):
+#         return "foo" if True else "bar"
+#
+#     if obj is 'null':
+#         return 'foo'
+#
+#     return obj.__dict__
 
 
 class ClientResponse(object):
@@ -427,8 +427,8 @@ class ClientResponse(object):
         self.status = response.status_code
 
         if self.status < 200 or self.status > 299:
-            if self.response.content is not None and self.status is not 404:
-                if self.status is 400:
+            if self.response.content is not None and self.status != 404:
+                if self.status == 400:
                     self.error_response = self.response.json()
                 else:
                     self.error_response = self.response

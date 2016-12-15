@@ -16,7 +16,7 @@ client = CleanSpeakClient('your-api-key', 'https://your-cleanspeak-api.inversoft
 # have configured the Application, copy its id into the code below.
 client_response = client.moderate({
     'content': {
-        'application': '<api-id-goes-here>',
+        'applicationId': '<api-id-goes-here>',
         'createInstant': current_time_millis(),
         'location': 'some-place',
         'parts': [
@@ -30,11 +30,6 @@ client_response = client.moderate({
 })
 
 if client_response.was_successful():
-    print client_response.success_response.json()
-
-# Send a message to CleanSpeak to be filtered
-client_response = client.filter({
-    'content': 'fuck off'
-})
-if client_response.was_successful():
-    print client_response.success_response.json()
+    print json.dumps(client_response.success_response)
+else:
+    print json.dumps(client_response.error_response)

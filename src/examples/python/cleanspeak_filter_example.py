@@ -1,7 +1,5 @@
 import json
 
-import datetime
-
 from com.inversoft.cleanspeak_client import CleanSpeakClient
 
 
@@ -14,4 +12,6 @@ client_response = client.filter({
 })
 
 if client_response.was_successful():
-    print client_response.success_response.json()
+    print json.dumps(client_response.success_response)
+else:
+    print json.dumps(client_response.error_response)
