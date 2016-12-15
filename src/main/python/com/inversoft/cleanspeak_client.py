@@ -14,12 +14,10 @@
 # language governing permissions and limitations under the License.
 #
 
-import json
-
 import requests
 
 
-class CleanSpeakClient(object):
+class CleanSpeakClient:
     """The CleanSpeakClient provides easy access to the CleanSpeak API.
 
     Attributes:
@@ -40,116 +38,117 @@ class CleanSpeakClient(object):
         """
         return self.start().uri('/content/item/filter').request(filter_request).post().go()
 
-    def flag(self, flag_request, id):
+    def flag(self, content_id, flag_request):
         """Calls CleanSpeak to indicate that a user has flagged another user's content (also known as reporting and often used to allow users to
         report content/chat from other users). This calls CleanSpeak's /content/item/flag end-point.
 
+        :parameter content_id: The id of the piece of content that is being flagged (see the docs for more information).
         :parameter flag_request: The flag request that is converted to JSON and sent to CleanSpeak (see the docs for more information)
-        :parameter id: The id of the piece of content that is being flagged (see the docs for more information).
+        :type content_id: uuid
         :type flag_request: object
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/content/item/flag').url_segment(id).request(flag_request).post().go()
+        return self.start().uri('/content/item/flag').url_segment(content_id).request(flag_request).post().go()
 
-    def moderate(self, moderate_request, id=None):
+    def moderate(self, content_id, moderate_request):
         """Calls CleanSpeak to moderate a piece of content according to the Application rules defined via the Management Interface. This calls
         CleanSpeak's /content/item/moderate end-point.
 
+        :parameter content_id: (Optional) The id of the piece of content. This is only valid for persistent content Applications (see the docs for more information)
         :parameter moderate_request: The moderate request that is converted to JSON and sent to CleanSpeak (see the docs for more information)
-        :parameter id: The id of the piece of content. This is only valid for persistent content Applications (see the docs for more information)
+        :type content_id: uuid
         :type moderate_request: object
-        :type id: uuid
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/content/item/moderate').url_segment(id).request(moderate_request).post().go()
+        return self.start().uri('/content/item/moderate').url_segment(content_id).request(moderate_request).post().go()
 
-    def moderate_update(self, moderate_request, id):
+    def moderate_update(self, content_id, moderate_request):
         """Calls CleanSpeak to update and re-moderate a piece of content that was updated externally by the user or a moderator. This re-moderates the
         content according to the Application rules defined via the Management Interface. This calls CleanSpeak's /content/item/moderate end-point.
 
+        :parameter content_id: The id of the piece of content. This is only valid for persistent content Applications (see the docs for more information)
         :parameter moderate_request: The moderate request that is converted to JSON and sent to CleanSpeak (see the docs for more information)
-        :parameter id: The id of the piece of content. This is only valid for persistent content Applications (see the docs for more information)
+        :type content_id: uuid
         :type moderate_request: object
-        :type id: uuid
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/content/item/moderate').url_segment(id).request(moderate_request).put().go()
+        return self.start().uri('/content/item/moderate').url_segment(content_id).request(moderate_request).put().go()
 
-    def action_user(self, action_request, id):
+    def action_user(self, user_id, action_request):
         """Calls CleanSpeak to notify it that a user was actioned outside of the CleanSpeak Management Interface. This calls CleanSpeak's
         /content/user/action end-point.
 
+        :parameter user_id: The id of the user that is being actioned (see the docs for more information).
         :parameter action_request: The action request that is converted to JSON and sent to CleanSpeak (see the docs for more information)
-        :parameter id: The id of the user that is being actioned (see the docs for more information).
+        :type user_id: uuid
         :type action_request: object
-        :type id: uuid
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/content/user/action').url_segment(id).request(action_request).post().go()
+        return self.start().uri('/content/user/action').url_segment(user_id).request(action_request).post().go()
 
-    def flag_user(self, flag_request, id):
+    def flag_user(self, user_id, flag_request):
         """Calls CleanSpeak to indicate that a user has flagged another user for some type of inappropriate behavior. This calls CleanSpeak's
         /content/user/flag end-point.
 
+        :parameter user_id: The id of the user that is being flagged (see the docs for more information).
         :parameter flag_request: The flag request that is converted to JSON and sent to CleanSpeak (see the docs for more information)
-        :parameter id: The id of the user that is being flagged (see the docs for more information).
+        :type user_id: uuid
         :type flag_request: object
-        :type id: uuid
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/content/user/flag').url_segment(id).request(flag_request).post().go()
+        return self.start().uri('/content/user/flag').url_segment(user_id).request(flag_request).post().go()
 
-    def delete_all_user_content(self, id):
+    def delete_all_user_content(self, user_id):
         """Calls CleanSpeak to delete all of the content generated by a single user. This is helpful for COPPA compliance. This calls CleanSpeak's
         /content/item end-point.
 
-        :parameter id: The id of the user whose content should be deleted (see the docs for more information).
-        :type id: uuid
+        :parameter user_id: The id of the user whose content should be deleted (see the docs for more information).
+        :type user_id: uuid
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/content/item').url_segment(id).delete().go()
+        return self.start().uri('/content/item').url_segment(user_id).delete().go()
 
-    def create_user(self, user_request, id):
+    def create_user(self, user_id, user_request):
         """Calls CleanSpeak to create a user that will generate content (or already has). This stores the user details in CleanSpeak so that they are
         available in the Management Interface. This calls CleanSpeak's /content/user end-point.
 
-        :parameter id: The id of the user being created (see the docs for more information).
+        :parameter user_id: The id of the user being created (see the docs for more information).
         :parameter user_request: The user request that is converted to JSON and sent to CleanSpeak (see the docs for more information)
-        :type id: uuid
+        :type user_id: uuid
         :type user_request: object
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/content/user').url_segment(id).request(user_request).post().go()
+        return self.start().uri('/content/user').url_segment(user_id).request(user_request).post().go()
 
-    def retrieve_user(self, id):
+    def retrieve_user(self, user_id):
         """Calls CleanSpeak to retrieve a user. This calls CleanSpeak's /content/user end-point.
 
-        :parameter id: The id of the user being retrieved (see the docs for more information).
-        :type id: uuid
+        :parameter user_id: The id of the user being retrieved (see the docs for more information).
+        :type user_id: uuid
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/content/user').url_segment(id).get().go()
+        return self.start().uri('/content/user').url_segment(user_id).get().go()
 
-    def update_user(self, user_request, id):
+    def update_user(self, user_id, user_request):
         """Calls CleanSpeak to update a user that was previously created. This updates the user details in CleanSpeak so that they are
         available in the Management Interface. This calls CleanSpeak's /content/user end-point.
 
-        :parameter id: The id of the user being updated (see the docs for more information).
+        :parameter user_id: The id of the user being updated (see the docs for more information).
         :parameter user_request: The user request that is converted to JSON and sent to CleanSpeak (see the docs for more information)
-        :type id: uuid
+        :type user_id: uuid
         :type user_request: object
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/content/user').url_segment(id).request(user_request).put().go()
+        return self.start().uri('/content/user').url_segment(user_id).request(user_request).put().go()
 
-    def deleted_user(self, id):
+    def deleted_user(self, user_id):
         """Calls CleanSpeak to delete a user. This calls CleanSpeak's /content/user end-point.
 
-        :parameter id: The id of the user being deleted (see the docs for more information).
-        :type id: uuid
+        :parameter user_id: The id of the user being deleted (see the docs for more information).
+        :type user_id: uuid
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/content/user').url_segment(id).delete().go()
+        return self.start().uri('/content/user').url_segment(user_id).delete().go()
 
     def retrieve_whitelist(self):
         """Calls CleanSpeak to retrieve the entire whitelist filter configuration. This is useful if your want to use a suggestion interface that
@@ -159,25 +158,25 @@ class CleanSpeakClient(object):
         """
         return self.start().uri('/filter/whitelist').get().go()
 
-    def create_application(self, application_request, id=None):
+    def create_application(self, application_id, application_request):
         """Calls CleanSpeak to create an application that content will be generated in. This calls CleanSpeak's /system/application end-point.
 
-        :parameter id: (Optional) The id of the application being created (see the docs for more information).
+        :parameter application_id: (Optional) The id of the application being created (see the docs for more information).
         :parameter application_request: The application request that is converted to JSON and sent to CleanSpeak (see the docs for more information)
-        :type id: uuid
+        :type application_id: uuid
         :type application_request: object
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/system/application').url_segment(id).request(application_request).post().go()
+        return self.start().uri('/system/application').url_segment(application_id).request(application_request).post().go()
 
-    def retrieve_application(self, id):
+    def retrieve_application(self, application_id):
         """Calls CleanSpeak to retrieve an application. This calls CleanSpeak's /system/application end-point.
 
-        :parameter id: The id of the application being retrieved (see the docs for more information).
-        :type id: uuid
+        :parameter application_id: The id of the application being retrieved (see the docs for more information).
+        :type application_id: uuid
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/system/application').url_segment(id).get().go()
+        return self.start().uri('/system/application').url_segment(application_id).get().go()
 
     def retrieve_applications(self):
         """Calls CleanSpeak to retrieve all of the applications. This calls CleanSpeak's /system/application end-point.
@@ -186,69 +185,69 @@ class CleanSpeakClient(object):
         """
         return self.start().uri('/system/application').get().go()
 
-    def update_application(self, application_request, id):
+    def update_application(self, application_id, application_request):
         """Calls CleanSpeak to update an application that was previously created. This calls CleanSpeak's /system/application end-point.
 
-        :parameter id: The id of the application being updated (see the docs for more information).
+        :parameter application_id: The id of the application being updated (see the docs for more information).
         :parameter application_request: The application request that is converted to JSON and sent to CleanSpeak (see the docs for more information)
-        :type id: uuid
+        :type application_id: uuid
         :type application_request: object
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/system/application').url_segment(id).request(application_request).put().go()
+        return self.start().uri('/system/application').url_segment(application_id).request(application_request).put().go()
 
-    def deleted_application(self, id):
+    def deleted_application(self, application_id):
         """Calls CleanSpeak to delete an application. This calls CleanSpeak's /system/application end-point.
 
-        :parameter id: The id of the application being deleted (see the docs for more information).
-        :type id: uuid
+        :parameter application_id: The id of the application being deleted (see the docs for more information).
+        :type application_id: uuid
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/system/application').url_segment(id).delete().go()
+        return self.start().uri('/system/application').url_segment(application_id).delete().go()
 
-    def create_moderator(self, moderator_request, id=None):
+    def create_moderator(self, moderator_id, moderator_request):
         """Calls CleanSpeak to create an admin/moderator that will have access to the CleanSpeak Management Interface. This calls CleanSpeak's
         /system/user end-point.
 
-        :parameter id: (Optional) The id of the admin/moderator being created (see the docs for more information).
+        :parameter moderator_id: (Optional) The id of the admin/moderator being created (see the docs for more information).
         :parameter moderator_request: The admin/moderator request that is converted to JSON and sent to CleanSpeak (see the docs for more information)
-        :type id: uuid
+        :type moderator_id: uuid
         :type moderator_request: object
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/system/user').url_segment(id).request(moderator_request).post().go()
+        return self.start().uri('/system/user').url_segment(moderator_id).request(moderator_request).post().go()
 
-    def retrieve_moderator(self, id):
+    def retrieve_moderator(self, moderator_id):
         """Calls CleanSpeak to retrieve an admin/moderator that has access to the CleanSpeak Management Interface. This calls CleanSpeak's
         /system/user end-point.
 
-        :parameter id: The id of the admin/moderator being retrieved (see the docs for more information).
-        :type id: uuid
+        :parameter moderator_id: The id of the admin/moderator being retrieved (see the docs for more information).
+        :type moderator_id: uuid
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/system/user').url_segment(id).get().go()
+        return self.start().uri('/system/user').url_segment(moderator_id).get().go()
 
-    def update_moderator(self, moderator_request, id):
+    def update_moderator(self, moderator_id, moderator_request):
         """Calls CleanSpeak to update an admin/moderator that will have access to the CleanSpeak Management Interface. This calls CleanSpeak's
         /system/user end-point.
 
-        :parameter id: The id of the admin/moderator being updated (see the docs for more information).
+        :parameter moderator_id: The id of the admin/moderator being updated (see the docs for more information).
         :parameter moderator_request: The admin/moderator request that is converted to JSON and sent to CleanSpeak (see the docs for more information)
-        :type id: uuid
+        :type moderator_id: uuid
         :type moderator_request: object
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/system/user').url_segment(id).request(moderator_request).put().go()
+        return self.start().uri('/system/user').url_segment(moderator_id).request(moderator_request).put().go()
 
-    def deleted_moderator(self, id):
+    def deleted_moderator(self, moderator_id):
         """Calls CleanSpeak to delete an admin/moderator that will have access to the CleanSpeak Management Interface. This calls CleanSpeak's
         /system/user end-point.
 
-        :parameter id: The id of the admin/moderator being deleted (see the docs for more information).
-        :type id: uuid
+        :parameter moderator_id: The id of the admin/moderator being deleted (see the docs for more information).
+        :type moderator_id: uuid
         :returns: A ClientResponse object that contains the response information from the API call.
         """
-        return self.start().uri('/system/user').url_segment(id).delete().go()
+        return self.start().uri('/system/user').url_segment(moderator_id).delete().go()
 
     def backup(self):
         """Calls CleanSpeak to download a backup of the database as a ZIP file. This calls CleanSpeak's /system/backup end-point.
@@ -385,30 +384,8 @@ class RESTClient:
 
         return self
 
-#
-# def to_json(obj):
-#     return json.dumps(obj, default=default_json_handler)
-#
-#
-# def to_pretty_json(obj):
-#     return json.dumps(obj, default=default_json_handler,
-#                       sort_keys=True, indent=4)
-#
-#
-# def default_json_handler(obj):
-#     if isinstance(obj, set):
-#         return list(obj)
-#
-#     if isinstance(obj, bool):
-#         return "foo" if True else "bar"
-#
-#     if obj is 'null':
-#         return 'foo'
-#
-#     return obj.__dict__
 
-
-class ClientResponse(object):
+class ClientResponse:
     """The ClientResponse returned from the the CleanSpeak API.
 
     Attributes:

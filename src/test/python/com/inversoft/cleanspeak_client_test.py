@@ -44,10 +44,10 @@ class ClientTest(unittest2.TestCase):
 
     def test_moderate_then_flag(self):
         # First moderate (and create)
-        id = uuid.uuid4()
+        content_id = uuid.uuid4()
         sender_id = uuid.uuid4()
         reporter_id = uuid.uuid4()
-        cr = self.client.moderate({
+        cr = self.client.moderate(content_id, {
             'content': {
                 'applicationId': '4305999d-e3c4-44dc-8955-d2b21b655806',
                 'createInstant': 42,
@@ -58,19 +58,19 @@ class ClientTest(unittest2.TestCase):
                 }],
                 'senderId': str(sender_id)
             }
-        }, id)
+        })
 
         self.assertEqual(cr.status, 200)
         self.assertEqual(cr.success_response['contentAction'], 'reject')
 
         # Now flag
-        cr = self.client.flag({
+        cr = self.client.flag(content_id, {
             'flag': {
                 'comment': 'testing 123',
                 'createInstant': 42,
                 'reporterId': str(reporter_id)
             }
-        }, id)
+        })
 
         self.assertEqual(cr.status, 200)
 
