@@ -50,7 +50,7 @@ target(name: "test", description: "Runs the project's tests", dependsOn: ["compi
   }
 }
 
-target(name: "int", description: "Releases a local integration build of the project", dependsOn: ["test"]) {
+target(name: "int", description: "Releases a local integration build of the project", dependsOn: ["jar"]) {
   dependency.integrate()
 }
 
