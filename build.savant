@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2015-2016, Inversoft Inc., All Rights Reserved
  */
-cleanspeakVersion = "3.6.0-{integration}"
 savantVersion = "1.0.0"
 
 project(group: "com.inversoft.cleanspeak", name: "cleanspeak-python-client", version: "3.6.0", licenses: ["Commercial"]) {
@@ -17,30 +16,38 @@ project(group: "com.inversoft.cleanspeak", name: "cleanspeak-python-client", ver
   }
 
   publications {
-    standard()
+    main {
+      publication(name: project.name, type: "zip", file: "build/zips/cleanspeak-python-client.zip")
+    }
   }
 }
 
 // Plugins
 release = loadPlugin(id: "org.savantbuild.plugin:release-git:${savantVersion}")
+dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:${savantVersion}")
 file = loadPlugin(id: "org.savantbuild.plugin:file:${savantVersion}")
 
 target(name: "clean", description: "Cleans the build directory") {
-  file.prune(dir: 'build/zips')
+  file.prune(dir: "build/zips")
 }
 
-target(name: "compile", description: "Compiles the Java source files") {
+target(name: "compile", description: "No-op") {
   // Nothing
 }
 
-target(name: "jar", description: "Builds the project JARs", dependsOn: ["compile"]) {
-  file.zip(file: 'build/zips/cleanspeak-python-client.zip') {
-    fileSet(dir: 'src/main/python', excludePatterns: [/.*pyc/])
+target(name: "jar", description: "Builds the project ZIP file", dependsOn: ["compile"]) {
+  file.zip(file: "build/zips/cleanspeak-python-client.zip") {
+    fileSet(dir: "src/main/python", excludePatterns: [/.*pyc/])
+    zipFileSet(dir: "src/examples/python", prefix: "examples", excludePatterns: [/.*pyc/])
   }
 }
 
-target(name: "test", description: "Runs the project's tests", dependsOn: ['compile']) {
-  // To-do
+target(name: "test", description: "Runs the project's tests", dependsOn: ["compile"]) {
+  def pb = new ProcessBuilder("python", "src/test/python/com/inversoft/cleanspeak_client_test.py")
+  pb.environment().put("PYTHONPATH", "src/main/python")
+  if (pb.inheritIO().start().waitFor() != 0) {
+    fail("Tests failed")
+  }
 }
 
 target(name: "int", description: "Releases a local integration build of the project", dependsOn: ["test"]) {
