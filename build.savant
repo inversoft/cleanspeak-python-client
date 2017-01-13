@@ -35,6 +35,10 @@ target(name: "compile", description: "No-op") {
   // Nothing
 }
 
+target(name: "idea", description: "No-op") {
+  // Nothing
+}
+
 target(name: "jar", description: "Builds the project ZIP file", dependsOn: ["compile"]) {
   file.zip(file: "build/zips/cleanspeak-python-client.zip") {
     fileSet(dir: "src/main/python", excludePatterns: [/.*pyc/])
