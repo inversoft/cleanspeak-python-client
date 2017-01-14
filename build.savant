@@ -3,7 +3,7 @@
  */
 savantVersion = "1.0.0"
 
-project(group: "com.inversoft.cleanspeak", name: "cleanspeak-python-client", version: "3.5.1", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft.cleanspeak", name: "cleanspeak-python-client", version: "3.6.0", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
     fetch {
@@ -60,8 +60,4 @@ target(name: "int", description: "Releases a local integration build of the proj
 
 target(name: "release", description: "Releases a full version of the project", dependsOn: ["int"]) {
   release.release()
-}
-
-target(name: "idea", description: "Updates the IntelliJ IDEA module file") {
-  idea.iml()
 }
