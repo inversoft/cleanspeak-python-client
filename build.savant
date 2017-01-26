@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2015-2016, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2015-2017, Inversoft Inc., All Rights Reserved
  */
 savantVersion = "1.0.0"
 
-project(group: "com.inversoft.cleanspeak", name: "cleanspeak-python-client", version: "3.6.2", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft.cleanspeak", name: "cleanspeak-python-client", version: "3.6.3", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
     fetch {
