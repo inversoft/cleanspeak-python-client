@@ -3,7 +3,7 @@
  */
 savantVersion = "1.0.0"
 
-project(group: "com.inversoft.cleanspeak", name: "cleanspeak-python-client", version: "3.13.1", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft.cleanspeak", name: "cleanspeak-python-client", version: "3.13.2", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
     fetch {
