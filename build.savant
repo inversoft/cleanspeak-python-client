@@ -21,8 +21,8 @@ project(group: "com.inversoft.cleanspeak", name: "cleanspeak-python-client", ver
 
 // Plugins
 release = loadPlugin(id: "org.savantbuild.plugin:release-git:${savantVersion}")
-dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:${savantVersion}")
-file = loadPlugin(id: "org.savantbuild.plugin:file:${savantVersion}")
+dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:1.0.2")
+file = loadPlugin(id: "org.savantbuild.plugin:file:1.0.2")
 
 target(name: "clean", description: "Cleans the build directory") {
   file.prune(dir: "build/zips")
